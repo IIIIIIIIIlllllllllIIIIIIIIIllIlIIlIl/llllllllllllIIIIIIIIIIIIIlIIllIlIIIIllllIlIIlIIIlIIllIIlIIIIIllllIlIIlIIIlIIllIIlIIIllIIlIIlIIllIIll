@@ -1,0 +1,117 @@
+local Memory = workspace:WaitForChild("Map")
+    :WaitForChild("CopeTrialsDirectory")
+    :WaitForChild("Memory")
+    :WaitForChild("Scriptables")
+    :WaitForChild("Stages")
+
+-- SETTINGS
+local HIGHLIGHT_COLOR = Color3.fromRGB(0, 255, 0)
+
+-- Create highlight
+local function createHighlight(part)
+    if not part or not part:IsA("BasePart") then return end
+    
+    -- Prevent duplicate highlights
+    if part:FindFirstChild("MemoryHighlight") then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "MemoryHighlight"
+    highlight.FillColor = HIGHLIGHT_COLOR
+    highlight.OutlineColor = Color3.new(1, 1, 1)
+    highlight.FillTransparency = 0.3
+    highlight.OutlineTransparency = 0
+    highlight.Adornee = part
+    highlight.Parent = part
+end
+
+-- Extract symbol name from a tile
+local function getSymbolFromTile(tile)
+    -- Case 1: symbol is the part name
+    if string.find(tile.Name, "Symbol_") then
+        return tile.Name
+    end
+
+    -- Case 2: symbol is inside (Decal / Mesh / StringValue etc.)
+    for _, obj in ipairs(tile:GetDescendants()) do
+        if string.find(obj.Name, "Symbol_") then
+            return obj.Name
+        end
+
+        -- If it's a Decal with texture naming
+        if obj:IsA("Decal") and obj.Texture then
+            for symbolName in pairs({
+                Symbol_Knuckledusters=true, Symbol_Rpg=true, Symbol_Molotov=true,
+                Symbol_Fire=true, Symbol_Cuffs=true, Symbol_Plane=true,
+                Symbol_Skull=true, Symbol_Crosshair=true, Symbol_Knife=true,
+                Symbol_Boots=true, Symbol_Bullet=true, Symbol_Revolver=true,
+                Symbol_Balaclava=true, Symbol_Bomb=true
+            }) do
+                if string.find(obj.Texture, symbolName) then
+                    return symbolName
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+-- MAIN SOLVER
+local function solveStage(stage)
+    local symbolsFolder = stage:FindFirstChild("Symbols")
+    local rowsFolder = stage:FindFirstChild("Rows")
+
+    if not symbolsFolder or not rowsFolder then return end
+
+    print("Solving:", stage.Name)
+
+    -- STEP 1: Get correct symbols per index
+    local correctSymbols = {}
+
+    for _, symbolPart in ipairs(symbolsFolder:GetChildren()) do
+        local index = tonumber(symbolPart.Name)
+        if index then
+            local symbolName = getSymbolFromTile(symbolPart)
+            if symbolName then
+                correctSymbols[index] = symbolName
+            end
+        end
+    end
+
+    -- STEP 2: Match with rows
+    for _, row in ipairs(rowsFolder:GetChildren()) do
+        local rowIndex = tonumber(row.Name:match("%d+"))
+        local correctSymbol = correctSymbols[rowIndex]
+
+        if correctSymbol then
+            for _, tile in ipairs(row:GetDescendants()) do
+                if tile:IsA("BasePart") then
+                    local tileSymbol = getSymbolFromTile(tile)
+
+                    if tileSymbol == correctSymbol then
+                        createHighlight(tile)
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- RUN FOR ALL STAGES
+for _, stage in ipairs(Memory:GetChildren()) do
+    if stage.Name:find("Stage") then
+        solveStage(stage)
+    end
+end
+
+-- OPTIONAL: AUTO-UPDATE EVERY SECOND
+task.spawn(function()
+    while true do
+        task.wait(1)
+        for _, stage in ipairs(Memory:GetChildren()) do
+            if stage.Name:find("Stage") then
+                solveStage(stage)
+            end
+        end
+    end
+end)
