@@ -11,7 +11,7 @@ local connection       -- will store RenderStepped connection
 
 UIS.InputBegan:Connect(function(input, processed)
 	if processed then return end
-	if input.KeyCode == Enum.KeyCode.LeftAlt then
+	if input.KeyCode == Enum.KeyCode.RightAlt then
 		isToggled = not isToggled  -- toggle on/off
 		
 		if isToggled then
