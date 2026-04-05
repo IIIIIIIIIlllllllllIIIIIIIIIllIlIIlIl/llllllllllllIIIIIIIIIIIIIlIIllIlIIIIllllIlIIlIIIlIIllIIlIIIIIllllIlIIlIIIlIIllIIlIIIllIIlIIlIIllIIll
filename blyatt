@@ -1618,17 +1618,36 @@ createButton("testpage", 70, function ()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/IIIIIIIIIlllllllllIIIIIIIIIllIlIIlIl/llllllllllllIIIIIIIIIIIIIlIIllIlIIIIllllIlIIlIIIlIIllIIlIIIIIllllIlIIlIIIlIIllIIlIIIllIIlIIlIIllIIll/refs/heads/main/IlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIllIIIlIlllIIIIIIIllIlllllIllllIII"))()
 end)
 
-createButton("fuck", 280, function ()
-local scriptfolder = game.Workspace
-:WaitForChild("Map")
-:WaitForChild("CopeTrialsDirectory")
-:WaitForChild("Hunt")
-:WaitForChild("Parts")
+createButton("deletetrees", 280, function ()
+    local treesFolder = game.Workspace
+        :WaitForChild("Map")
+        :WaitForChild("CopeTrialsDirectory")
+        :WaitForChild("Hunt")
+        :WaitForChild("Parts")
+        :WaitForChild("Trees")
 
-local tree = scriptfolder:FindFirstChild("Trees")
+    for _, tree in ipairs(treesFolder:GetChildren()) do
+        
+        -- Loop through everything inside each tree
+        for _, obj in ipairs(tree:GetDescendants()) do
+            
+            -- Remove SurfaceAppearance (this is what your screenshot shows)
+            if obj:IsA("SurfaceAppearance") then
+                obj:Destroy()
+            end
 
--- Delete Copeman
-if tree then
-    tree:Destroy()
-end
+            -- Remove mesh IDs if any exist
+            if obj:IsA("MeshPart") then
+                obj.MeshId = ""
+            elseif obj:IsA("SpecialMesh") then
+                obj.MeshId = ""
+            end
+        end
+
+        -- Change transparency of the "Part"
+        local part = tree:FindFirstChild("Part")
+        if part and part:IsA("BasePart") then
+            part.Transparency = 0.5
+        end
+    end
 end)
