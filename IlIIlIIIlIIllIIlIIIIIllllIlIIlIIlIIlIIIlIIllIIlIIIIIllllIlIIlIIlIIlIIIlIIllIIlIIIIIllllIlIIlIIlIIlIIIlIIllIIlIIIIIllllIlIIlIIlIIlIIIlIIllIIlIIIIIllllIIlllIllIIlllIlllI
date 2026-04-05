@@ -1,3 +1,4 @@
+--memory
 local Memory = workspace:WaitForChild("Map")
     :WaitForChild("CopeTrialsDirectory")
     :WaitForChild("Memory")
