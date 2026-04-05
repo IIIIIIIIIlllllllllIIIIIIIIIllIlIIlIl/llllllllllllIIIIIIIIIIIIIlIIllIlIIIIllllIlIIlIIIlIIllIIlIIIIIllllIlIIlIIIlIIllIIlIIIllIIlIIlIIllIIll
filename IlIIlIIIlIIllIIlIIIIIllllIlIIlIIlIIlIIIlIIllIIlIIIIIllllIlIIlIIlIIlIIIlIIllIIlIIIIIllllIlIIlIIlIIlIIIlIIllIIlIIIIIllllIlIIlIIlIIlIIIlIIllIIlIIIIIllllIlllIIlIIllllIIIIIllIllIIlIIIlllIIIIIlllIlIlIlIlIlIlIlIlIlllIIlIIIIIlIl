@@ -1,4 +1,3 @@
--killcope
 local StarterGui = game:GetService("StarterGui")
 
 local HuntFolder = game.Workspace
@@ -30,7 +29,7 @@ task.delay(1, function()
     local check = HuntFolder:FindFirstChild("Copeman")
 
     if not check then
-        notify("COPEMAN HAS BEEN OBLITERATED.")
+        notify("Copeman removal confirmed.")
     else
         notify("Warning: Copeman still exists!")
     end
