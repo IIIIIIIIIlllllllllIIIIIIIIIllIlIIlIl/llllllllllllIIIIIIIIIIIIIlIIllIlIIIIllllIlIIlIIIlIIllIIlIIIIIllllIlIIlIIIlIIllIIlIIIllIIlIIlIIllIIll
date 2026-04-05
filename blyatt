@@ -45,7 +45,7 @@ gui.Parent = player:WaitForChild("PlayerGui")
 -- MAIN FRAME
 local frame = Instance.new("Frame")
 frame.Parent = gui
-frame.Size = UDim2.new(0, 240, 0, 281)
+frame.Size = UDim2.new(0, 240, 0, 315)
 frame.Position = UDim2.new(0.5, 440, 0.5, -130)
 frame.BackgroundColor3 = Color3.fromRGB(35, 0, 0)
 frame.BorderSizePixel = 0
@@ -1616,4 +1616,19 @@ end)
 
 createButton("testpage", 70, function ()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/IIIIIIIIIlllllllllIIIIIIIIIllIlIIlIl/llllllllllllIIIIIIIIIIIIIlIIllIlIIIIllllIlIIlIIIlIIllIIlIIIIIllllIlIIlIIIlIIllIIlIIIllIIlIIlIIllIIll/refs/heads/main/IlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIllIIIlIlllIIIIIIIllIlllllIllllIII"))()
+end)
+
+createButton("fuck", 280, function ()
+local scriptfolder = game.Workspace
+:WaitForChild("Map")
+:WaitForChild("CopeTrialsDirectory")
+:WaitForChild("Hunt")
+:WaitForChild("Parts")
+
+local tree = scriptfolder:FindFirstChild("Trees")
+
+-- Delete Copeman
+if tree then
+    tree:Destroy()
+end
 end)
