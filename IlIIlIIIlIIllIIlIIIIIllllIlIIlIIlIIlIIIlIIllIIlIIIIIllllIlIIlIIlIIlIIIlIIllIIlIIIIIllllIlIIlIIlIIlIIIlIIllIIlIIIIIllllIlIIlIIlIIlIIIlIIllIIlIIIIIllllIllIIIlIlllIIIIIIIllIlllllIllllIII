@@ -1,3 +1,4 @@
+--pagesp
 local PagesFolder = game.Workspace
     :WaitForChild("Map")
     :WaitForChild("CopeTrialsDirectory")
