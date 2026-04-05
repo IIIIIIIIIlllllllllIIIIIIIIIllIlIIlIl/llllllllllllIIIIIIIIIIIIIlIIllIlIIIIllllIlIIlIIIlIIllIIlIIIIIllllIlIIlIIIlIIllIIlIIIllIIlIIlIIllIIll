@@ -1,0 +1,214 @@
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+local Shopz = game.Workspace:WaitForChild("Map"):WaitForChild("Shopz")
+local player = Players.LocalPlayer
+
+-- Items to track
+local ItemsToCheck = {
+    "_CopeCoin26", "FrontMan", "Infantry_Neutral", "PinkGaurd_Officer",
+    "SoulContract", "__SlayerKit", "__NecromancerKit", "MonsterMashPotion",
+    "X24", "Corruptis", "CursedDagger", "PumpkinBomb", "PumpkinHelmet"
+}
+
+-- ✅ FIXED: use ordered table (no Vector3 keys)
+local DealerLocations = {
+    {pos = Vector3.new(2, 2, 2), name = "basketball"},
+    {pos = Vector3.new(-1, -1, -1), name = "workshop"},
+
+    {pos = Vector3.new(-4460.54248, 3.79995298, -535.604431), name = "factory"},
+    {pos = Vector3.new(-4144.39014, -88.7997742, 25.7111721), name = "gas sewer"},
+    {pos = Vector3.new(-4122.08252, -93.2760468, -701.300842), name = "workshop sewer"},
+    {pos = Vector3.new(-4516.70459, 3.90002775, -82.6484146), name = "pizza"},
+    {pos = Vector3.new(-4245.05518, 5.65029144, -507.352448), name = "workshopAF"},
+    {pos = Vector3.new(-4263.91943, 3.91003728, 95.2240372), name = "gas"},
+    {pos = Vector3.new(-3894.13892, 3.89993596, -165.341385), name = "junkyard"},
+    {pos = Vector3.new(-4815.96191, 3.79992986, -711.441406), name = "motel"},
+    {pos = Vector3.new(-4955.24561, 3.79997373, -9.06470203), name = "basketballAF"},
+    {pos = Vector3.new(-4488.40234, 3.899997, -1152.18933), name = "tower"},
+    {pos = Vector3.new(-4604.64502, -32.7113342, -698.740417), name = "subway"},
+    {pos = Vector3.new(-4769.96582, 4.99945068, -420.997833), name = "a1"},
+    {pos = Vector3.new(-4205.69531, 5.35120201, -186.880066), name = "a2"},
+}
+
+-- Helpers
+local function getRestockTime(dealer)
+    local restockObj = dealer:FindFirstChild("RestockTime", true)
+    if restockObj and restockObj:IsA("ValueBase") then return tostring(restockObj.Value).."s" end
+    local attr = dealer:GetAttribute("RestockTime")
+    if attr then return tostring(attr).."s" end
+    return "Unknown"
+end
+
+local function scanDealer(dealer)
+    local currentStocks = dealer:FindFirstChild("CurrentStocks")
+    local foundItems = {}
+    for _, itemName in ipairs(ItemsToCheck) do foundItems[itemName] = false end
+
+    if currentStocks then
+        for _, stock in ipairs(currentStocks:GetChildren()) do
+            for _, itemName in ipairs(ItemsToCheck) do
+                if stock.Name == itemName and stock.Value == 1 then
+                    foundItems[itemName] = true
+                end
+            end
+        end
+    end
+
+    return foundItems
+end
+
+local function highlightDealer(mainPart)
+    if not mainPart then return end
+    if mainPart:FindFirstChild("CopeHighlight") then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "CopeHighlight"
+    highlight.FillColor = Color3.fromRGB(0,255,0)
+    highlight.OutlineColor = Color3.fromRGB(255,255,0)
+    highlight.FillTransparency = 0.3
+    highlight.OutlineTransparency = 0
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Adornee = mainPart
+    highlight.Parent = mainPart
+end
+
+-- GUI setup
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "DealerDashboardGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 120, 0, 25)
+toggleButton.Position = UDim2.new(0.5, -60, 0, 5)
+toggleButton.Text = "Toggle Dashboard"
+toggleButton.BackgroundColor3 = Color3.fromRGB(50,50,50)
+toggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+toggleButton.Parent = screenGui
+toggleButton.Active = true
+toggleButton.Draggable = true
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 800, 0, 250)
+frame.Position = UDim2.new(0.5, -400, 0.1, 0)
+frame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+frame.Active = true
+frame.Draggable = true
+frame.Visible = true
+frame.Parent = screenGui
+
+toggleButton.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
+end)
+
+local headerHeight = 25
+local cellWidth = 100
+local dealerColumnWidth = 150
+
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, 0, 1, -headerHeight)
+scrollFrame.Position = UDim2.new(0, 0, 0, headerHeight)
+scrollFrame.ScrollBarThickness = 10
+scrollFrame.Parent = frame
+
+-- Headers
+for i, itemName in ipairs(ItemsToCheck) do
+    local header = Instance.new("TextLabel")
+    header.Size = UDim2.new(0, cellWidth, 0, headerHeight)
+    header.Position = UDim2.new(0, dealerColumnWidth + (i-1)*cellWidth, 0, 0)
+    header.Text = itemName
+    header.BackgroundColor3 = Color3.fromRGB(70,70,70)
+    header.TextColor3 = Color3.fromRGB(255,255,255)
+    header.Parent = scrollFrame
+end
+
+-- Rows
+local dealerRows = {}
+local rowHeight = 25
+local index = 0
+
+for _, data in ipairs(DealerLocations) do
+    local label = Instance.new("TextButton")
+    label.Size = UDim2.new(0, dealerColumnWidth, 0, rowHeight)
+    label.Position = UDim2.new(0, 0, 0, headerHeight + index*rowHeight)
+    label.Text = data.name .. " (waiting)"
+    label.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    label.TextColor3 = Color3.fromRGB(255,255,255)
+    label.Parent = scrollFrame
+
+    dealerRows[data.name] = {
+        label = label,
+        rowIndex = index,
+        dealerInstance = nil,
+        position = data.pos
+    }
+
+    index += 1
+end
+
+scrollFrame.CanvasSize = UDim2.new(0, dealerColumnWidth + #ItemsToCheck*cellWidth, 0, headerHeight + index*rowHeight)
+
+-- UPDATE LOOP
+while true do
+    -- ✅ reset (fixes AF disappearing issue)
+    for _, row in pairs(dealerRows) do
+        row.dealerInstance = nil
+    end
+
+    -- match dealers
+    for _, dealer in ipairs(Shopz:GetChildren()) do
+        if dealer.Name == "Dealer" or dealer.Name == "ArmoryDealer" then
+            local mainPart = dealer:FindFirstChild("MainPart")
+            if mainPart then
+                for _, row in pairs(dealerRows) do
+                    if (mainPart.Position - row.position).Magnitude < 25 then
+                        row.dealerInstance = dealer
+                    end
+                end
+            end
+        end
+    end
+
+    -- update GUI
+    for name, row in pairs(dealerRows) do
+        local foundItems = {}
+        for _, itemName in ipairs(ItemsToCheck) do
+            foundItems[itemName] = false
+        end
+
+        if row.dealerInstance then
+            local dealer = row.dealerInstance
+            foundItems = scanDealer(dealer)
+            local restock = getRestockTime(dealer)
+            row.label.Text = name .. " (" .. restock .. ")"
+        else
+            row.label.Text = name .. " (waiting)"
+        end
+
+        if row.itemCells then
+            for _, cell in pairs(row.itemCells) do
+                cell:Destroy()
+            end
+        end
+
+        row.itemCells = {}
+
+        for i, itemName in ipairs(ItemsToCheck) do
+            local cell = Instance.new("TextLabel")
+            cell.Size = UDim2.new(0, cellWidth, 0, rowHeight)
+            cell.Position = UDim2.new(0, dealerColumnWidth + (i-1)*cellWidth, 0, headerHeight + row.rowIndex*rowHeight)
+
+            if row.dealerInstance then
+                cell.BackgroundColor3 = foundItems[itemName] and Color3.fromRGB(0,200,0) or Color3.fromRGB(150,0,0)
+            else
+                cell.BackgroundColor3 = Color3.fromRGB(80,80,80)
+            end
+
+            cell.Text = ""
+            cell.Parent = scrollFrame
+            row.itemCells[itemName] = cell
+        end
+    end
+
+    task.wait(1)
+end
