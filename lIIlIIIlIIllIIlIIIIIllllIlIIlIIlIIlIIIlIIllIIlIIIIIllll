@@ -1,3 +1,4 @@
+--gui item finder
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
 local Shopz = game.Workspace:WaitForChild("Map"):WaitForChild("Shopz")
