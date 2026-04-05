@@ -1,0 +1,137 @@
+local StarterGui = game:GetService("StarterGui")
+
+local ItemsToCheck = {
+    "_CopeCoin26", "FrontMan", "Infantry_Neutral", "PinkGaurd_Officer",
+    "SoulContract", "__SlayerKit", "__NecromancerKit", "MonsterMashPotion",
+    "X24", "Corruptis", "CursedDagger", "PumpkinBomb", "PumpkinHelmet"
+}
+
+-- Convert to lookup table for fast checks
+local ItemLookup = {}
+for _, item in ipairs(ItemsToCheck) do
+    ItemLookup[item] = true
+end
+
+local Shopz = game.Workspace
+    :WaitForChild("Map")
+    :WaitForChild("Shopz")
+
+-- Position → Name mapping
+local DealerLocations = {
+    -- Normal dealers
+    [Vector3.new(-4460.54248, 3.79995298, -535.604431)] = "factory",
+    [Vector3.new(-4144.39014, -88.7997742, 25.7111721)] = "gas sewer",
+    [Vector3.new(-4122.08252, -93.2760468, -701.300842)] = "workshop sewer",
+    [Vector3.new(-4516.70459, 3.90002775, -82.6484146)] = "pizza",
+    [Vector3.new(-4245.05518, 5.65029144, -507.352448)] = "workshopAF",
+    [Vector3.new(-4263.91943, 3.91003728, 95.2240372)] = "gas",
+    [Vector3.new(-3894.13892, 3.89993596, -165.341385)] = "junkyard",
+    [Vector3.new(-4815.96191, 3.79992986, -711.441406)] = "motel",
+    [Vector3.new(-4955.24561, 3.79997373, -9.06470203)] = "basketballAF",
+    [Vector3.new(-4488.40234, 3.899997, -1152.18933)] = "tower",
+    [Vector3.new(-4604.64502, -32.7113342, -698.740417)] = "subway",
+
+
+    -- Armory dealers
+    [Vector3.new(-4769.96582, 4.99945068, -420.997833)] = "a1",
+    [Vector3.new(-4205.69531, 5.35120201, -186.880066)] = "a2",
+}
+
+-- Get dealer name
+local function getDealerName(mainPart)
+    if not mainPart then return "Unknown" end
+
+    local pos = mainPart.Position
+
+    for storedPos, name in pairs(DealerLocations) do
+        if (pos - storedPos).Magnitude < 7 then
+            return name
+        end
+    end
+
+    return "Unknown"
+end
+
+-- Highlight (through walls)
+local function highlightDealer(mainPart)
+    if not mainPart then return end
+    if mainPart:FindFirstChild("CopeHighlight") then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "CopeHighlight"
+    highlight.FillColor = Color3.fromRGB(255, 255, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+    highlight.FillTransparency = 0.2
+    highlight.OutlineTransparency = 0
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+    highlight.Adornee = mainPart
+    highlight.Parent = mainPart
+end
+
+-- Get restock time
+local function getRestockTime(dealer)
+    local restockObj = dealer:FindFirstChild("RestockTime", true)
+
+    if restockObj and restockObj:IsA("ValueBase") then
+        return tostring(restockObj.Value) .. "s"
+    end
+
+    local attr = dealer:GetAttribute("RestockTime")
+    if attr then
+        return tostring(attr) .. "s"
+    end
+
+    return "Unknown"
+end
+
+-- Scan function (works for both Dealer types)
+local function scanDealer(dealer)
+    local currentStocks = dealer:FindFirstChild("CurrentStocks")
+    local mainPart = dealer:FindFirstChild("MainPart")
+
+    if not currentStocks or not mainPart then return false end
+
+    for _, obj in ipairs(currentStocks:GetChildren()) do
+        if ItemLookup[obj.Name] and obj.Value == 1 then
+            local dealerName = getDealerName(mainPart)
+            local restockText = getRestockTime(dealer)
+
+            highlightDealer(mainPart)
+
+           StarterGui:SetCore("SendNotification", {
+                Title = "Item Found!",
+                Text = obj.Name .. " | Location: " .. dealerName .. " | Restock: " .. restockText,
+                Duration = 5
+            })
+
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Main loop
+while true do
+    local foundSomething = false
+
+    for _, obj in ipairs(Shopz:GetChildren()) do
+        if obj.Name == "Dealer" or obj.Name == "ArmoryDealer" then
+            if scanDealer(obj) then
+                foundSomething = true
+            end
+        end
+    end
+
+    if not foundSomething then
+        local currentTime = os.date("%X")
+        StarterGui:SetCore("SendNotification", {
+            Title = "Scan Result",
+            Text = "[" .. currentTime .. "] Nothing interesting found",
+            Duration = 5
+        })
+    end
+
+    task.wait(10)
+end
