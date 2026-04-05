@@ -294,37 +294,3 @@ end
 
 notify("Fir trees hidden, hitboxes visible.")
 end)
-
-createButton("deletestatic", 315, function ()
-local StarterGui = game:GetService("StarterGui")
-
-local cope = game.Workspace
-    :WaitForChild("Cope")
-
--- Delete Copeman
-if cope then
-    cope:Destroy()
-end
-
--- Notification function
-local function notify(text)
-    StarterGui:SetCore("SendNotification", {
-        Title = "System",
-        Text = text,
-        Duration = 4
-    })
-end
-
--- Initial notification
-notify("STATIC is eradicated")
-
--- Check after 1 second
-task.delay(1, function()
-    local check = HuntFolder:FindFirstChild("Copeman")
-
-    if not check then
-        notify("STATIC has been OBLITERATED")
-    else
-        notify("Warning: Copeman still exists!")
-    end
-end)
