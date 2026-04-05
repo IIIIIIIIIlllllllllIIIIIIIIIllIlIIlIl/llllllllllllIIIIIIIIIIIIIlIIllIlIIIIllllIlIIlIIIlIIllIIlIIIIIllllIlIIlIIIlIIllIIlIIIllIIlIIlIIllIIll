@@ -45,7 +45,7 @@ gui.Parent = player:WaitForChild("PlayerGui")
 -- MAIN FRAME
 local frame = Instance.new("Frame")
 frame.Parent = gui
-frame.Size = UDim2.new(0, 240, 0, 315)
+frame.Size = UDim2.new(0, 240, 0, 350)
 frame.Position = UDim2.new(0.5, 440, 0.5, -130)
 frame.BackgroundColor3 = Color3.fromRGB(35, 0, 0)
 frame.BorderSizePixel = 0
@@ -295,7 +295,7 @@ end
 notify("Fir trees hidden, hitboxes visible.")
 end)
 
-createButton("315", 140, function()
+createButton("deletestatic", 315    , function()
 local StarterGui = game:GetService("StarterGui")
 
 local static = game.Workspace
