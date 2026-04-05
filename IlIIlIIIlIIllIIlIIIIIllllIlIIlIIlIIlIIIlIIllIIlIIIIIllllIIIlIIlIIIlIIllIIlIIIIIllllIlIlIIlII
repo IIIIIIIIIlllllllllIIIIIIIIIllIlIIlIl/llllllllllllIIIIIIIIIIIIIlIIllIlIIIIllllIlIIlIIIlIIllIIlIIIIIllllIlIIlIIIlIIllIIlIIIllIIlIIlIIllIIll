@@ -1,4 +1,5 @@
-    local treesFolder = game.Workspace
+--treedeleter
+local treesFolder = game.Workspace
         :WaitForChild("Map")
         :WaitForChild("CopeTrialsDirectory")
         :WaitForChild("Hunt")
