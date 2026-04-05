@@ -1,3 +1,4 @@
+-killcope
 local StarterGui = game:GetService("StarterGui")
 
 local HuntFolder = game.Workspace
