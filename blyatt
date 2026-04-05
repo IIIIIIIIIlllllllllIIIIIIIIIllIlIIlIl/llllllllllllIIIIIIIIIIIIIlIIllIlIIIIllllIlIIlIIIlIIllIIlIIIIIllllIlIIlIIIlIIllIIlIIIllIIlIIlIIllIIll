@@ -176,11 +176,11 @@ createButton("ItemFinder_GUI", 245, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/IIIIIIIIIlllllllllIIIIIIIIIllIlIIlIl/llllllllllllIIIIIIIIIIIIIlIIllIlIIIIllllIlIIlIIIlIIllIIlIIIIIllllIlIIlIIIlIIllIIlIIIllIIlIIlIIllIIll/refs/heads/main/lIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllll"))()
 end)
 
-createButton("testmem", 105, function ()
+createButton("memoryesp", 105, function ()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/IIIIIIIIIlllllllllIIIIIIIIIllIlIIlIl/llllllllllllIIIIIIIIIIIIIlIIllIlIIIIllllIlIIlIIIlIIllIIlIIIIIllllIlIIlIIIlIIllIIlIIIllIIlIIlIIllIIll/refs/heads/main/IlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIIlllIllIIlllIlllI"))()
 end)
 
-createButton("testcopekill", 35, function()
+createButton("killcopeguy", 35, function()
     local StarterGui = game:GetService("StarterGui")
 
 local HuntFolder = game.Workspace
@@ -219,8 +219,40 @@ task.delay(1, function()
 end)
 end)
 
-createButton("testpage", 70, function ()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/IIIIIIIIIlllllllllIIIIIIIIIllIlIIlIl/llllllllllllIIIIIIIIIIIIIlIIllIlIIIIllllIlIIlIIIlIIllIIlIIIIIllllIlIIlIIIlIIllIIlIIIllIIlIIlIIllIIll/refs/heads/main/IlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIlIIlIIlIIlIIIlIIllIIlIIIIIllllIllIIIlIlllIIIIIIIllIlllllIllllIII"))()
+createButton("page esp", 70, function ()
+    local PagesFolder = game.Workspace
+    :WaitForChild("Map")
+    :WaitForChild("CopeTrialsDirectory")
+    :WaitForChild("Hunt")
+    :WaitForChild("Scriptables")
+    :WaitForChild("Pages")
+
+local pageNames = {
+    "1_Page","2_Page","3_Page","4_Page",
+    "5_Page","6_Page","7_Page","8_Page"
+}
+
+-- Store highlights so we don’t duplicate them
+local activeHighlights = {}
+
+while true do
+    for _, name in ipairs(pageNames) do
+        local page = PagesFolder:FindFirstChild(name)
+
+        if page and not activeHighlights[page] then
+            local highlight = Instance.new("Highlight")
+            highlight.FillColor = Color3.fromRGB(255, 255, 0) -- yellow
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            highlight.FillTransparency = 0.3
+            highlight.OutlineTransparency = 0
+
+            highlight.Parent = page
+            activeHighlights[page] = highlight
+        end
+    end
+
+    task.wait(0.5)
+end
 end)
 
 createButton("deletetrees", 280, function ()
