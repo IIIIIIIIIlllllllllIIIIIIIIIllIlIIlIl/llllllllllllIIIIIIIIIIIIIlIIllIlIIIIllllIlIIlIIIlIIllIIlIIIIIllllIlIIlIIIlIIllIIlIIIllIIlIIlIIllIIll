@@ -54,6 +54,15 @@ local stroke = Instance.new("UIStroke", frame)
 stroke.Color = Color3.fromRGB(120, 0, 0)
 stroke.Thickness = 2
 
+-- cred
+local cred = Instance.new("TextLabel")
+cred.Parent = frame
+cred.Size = UDim2.new(1, 0, 0, 30)
+cred.BackgroundTransparency = 1
+crec.Text = "MADE BY AST_RUS"
+cred.Font = Enum.Font.Code
+cred.TextScaled = true
+
 -- TITLE
 local title = Instance.new("TextLabel")
 title.Parent = frame
