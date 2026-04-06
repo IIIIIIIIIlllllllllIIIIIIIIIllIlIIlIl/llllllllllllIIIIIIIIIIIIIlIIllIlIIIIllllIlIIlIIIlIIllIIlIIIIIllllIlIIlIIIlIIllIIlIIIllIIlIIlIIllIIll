@@ -59,7 +59,7 @@ local cred = Instance.new("TextLabel")
 cred.Parent = frame
 cred.Size = UDim2.new(1, 0, 0, 30)
 cred.BackgroundTransparency = 1
-crec.Text = "MADE BY AST_RUS"
+cred.Text = "MADE BY AST_RUS"
 cred.Font = Enum.Font.Code
 cred.TextScaled = true
 
