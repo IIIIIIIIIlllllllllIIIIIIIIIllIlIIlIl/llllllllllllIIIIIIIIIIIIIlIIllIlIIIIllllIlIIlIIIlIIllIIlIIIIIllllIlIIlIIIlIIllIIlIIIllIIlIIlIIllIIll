@@ -45,7 +45,7 @@ gui.Parent = player:WaitForChild("PlayerGui")
 -- MAIN FRAME
 local frame = Instance.new("Frame")
 frame.Parent = gui
-frame.Size = UDim2.new(0, 240, 0, 350)
+frame.Size = UDim2.new(0, 240, 0, 384)
 frame.Position = UDim2.new(0.5, 440, 0.5, -130)
 frame.BackgroundColor3 = Color3.fromRGB(35, 0, 0)
 frame.BorderSizePixel = 0
@@ -337,4 +337,8 @@ task.delay(1, function()
         notify("Warning: static still exists!")
     end
 end)
+end)
+
+createButton("eqrleak", 350, function ()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Criminality-eqr-hub-source-leaked-55406"))()
 end)
