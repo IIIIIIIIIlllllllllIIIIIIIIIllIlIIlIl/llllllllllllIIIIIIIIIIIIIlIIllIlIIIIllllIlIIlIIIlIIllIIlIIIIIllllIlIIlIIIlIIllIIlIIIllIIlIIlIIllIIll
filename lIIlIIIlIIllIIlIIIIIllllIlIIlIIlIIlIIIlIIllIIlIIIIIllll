@@ -1,4 +1,5 @@
---gui item finder
+ --gui item finder
+-- new sigma version works after april fools
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
 local Shopz = game.Workspace:WaitForChild("Map"):WaitForChild("Shopz")
@@ -13,8 +14,8 @@ local ItemsToCheck = {
 
 -- ✅ FIXED: use ordered table (no Vector3 keys)
 local DealerLocations = {
-    {pos = Vector3.new(2, 2, 2), name = "basketball"},
-    {pos = Vector3.new(-1, -1, -1), name = "workshop"},
+    {pos = Vector3.new(-4978.051, 3.8, -35.343), name = "basketball"},
+    {pos = Vector3.new(-4203.671, 4.036, -552.825), name = "workshop"},
 
     {pos = Vector3.new(-4460.54248, 3.79995298, -535.604431), name = "factory"},
     {pos = Vector3.new(-4144.39014, -88.7997742, 25.7111721), name = "gas sewer"},
