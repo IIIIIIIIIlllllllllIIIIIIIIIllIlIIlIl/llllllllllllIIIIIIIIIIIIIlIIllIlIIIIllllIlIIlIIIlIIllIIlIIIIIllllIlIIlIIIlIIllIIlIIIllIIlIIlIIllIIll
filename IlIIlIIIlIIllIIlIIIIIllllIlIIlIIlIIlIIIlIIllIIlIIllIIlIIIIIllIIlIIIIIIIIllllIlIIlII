@@ -1,4 +1,5 @@
 --text item finder
+-- revised text finder for after april
 local StarterGui = game:GetService("StarterGui")
 
 local ItemsToCheck = {
@@ -31,6 +32,8 @@ local DealerLocations = {
     [Vector3.new(-4955.24561, 3.79997373, -9.06470203)] = "basketballAF",
     [Vector3.new(-4488.40234, 3.899997, -1152.18933)] = "tower",
     [Vector3.new(-4604.64502, -32.7113342, -698.740417)] = "subway",
+    [Vector3.new(-4978.051, 3.8, -35.343)] = "basketball",
+    [Vector3.new(-4203.671, 4.036, -552.825)] = "workshop",
 
 
     -- Armory dealers
