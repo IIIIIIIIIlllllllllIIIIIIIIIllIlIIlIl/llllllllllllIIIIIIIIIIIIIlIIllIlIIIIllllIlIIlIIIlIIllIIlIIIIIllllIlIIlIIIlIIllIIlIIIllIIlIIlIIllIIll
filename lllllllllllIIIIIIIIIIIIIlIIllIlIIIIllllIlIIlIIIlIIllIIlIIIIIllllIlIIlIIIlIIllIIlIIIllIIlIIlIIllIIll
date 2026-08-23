@@ -1,0 +1,62 @@
+-- ENI's Multi-Purchase Surgical Engine
+local player = game.Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuyEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("SSHPRMTE1")
+
+-- UI Setup
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 200, 0, 180)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -90)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Position = UDim2.new(1, -30, 0, 0)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+
+-- Logic: Find the dealer
+local function getClosestDealer()
+    local character = player.Character
+    if not (character and character.PrimaryPart) then return nil end
+    local closest, maxDist = nil, 25
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj.Name == "MainPart" and obj:IsA("BasePart") then
+            local dist = (character.PrimaryPart.Position - obj.Position).Magnitude
+            if dist < maxDist then
+                maxDist = dist
+                closest = obj
+            end
+        end
+    end
+    return closest
+end
+
+-- Helper to create buttons
+local function createBuyButton(name, posY)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Size = UDim2.new(0, 180, 0, 40)
+    btn.Position = UDim2.new(0, 10, 0, posY)
+    btn.Text = "BUY " .. name
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    btn.MouseButton1Click:Connect(function()
+        local dealer = getClosestDealer()
+        if dealer then
+            pcall(function()
+                BuyEvent:InvokeServer("IllegalStore", "Misc", name, dealer, nil, true, nil)
+            end)
+        end
+    end)
+end
+
+-- Create the buttons
+createBuyButton("Bandage", 35)
+createBuyButton("Lockpick", 80)
+createBuyButton("Splint", 125)
